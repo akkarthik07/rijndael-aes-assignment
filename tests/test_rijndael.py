@@ -18,6 +18,8 @@ def test_add_round_key():
 
         expected = bytes(b ^ k for b, k in zip(block_data, key_data))
 
+        rijndael.add_round_key.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int]
+
         block = ctypes.create_string_buffer(block_data)
         round_key = ctypes.create_string_buffer(key_data)
         rijndael.add_round_key(block, round_key, AES_BLOCK_SIZE_128)
