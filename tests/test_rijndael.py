@@ -23,7 +23,11 @@ def test_add_round_key():
 
         block = ctypes.create_string_buffer(block_data)
         round_key = ctypes.create_string_buffer(key_data)
-        rijndael.add_round_key(ctypes.cast(block, ctypes.POINTER(ctypes.c_uint8)), ctypes.cast(round_key, ctypes.POINTER(ctypes.c_uint8)), AES_BLOCK_SIZE_128)
+        rijndael.add_round_key(
+            ctypes.cast(block, ctypes.POINTER(ctypes.c_ubyte)), 
+            ctypes.cast(round_key, ctypes.POINTER(ctypes.c_ubyte)), 
+            AES_BLOCK_SIZE_128
+        )
         result = bytes(block)[:16]
 
         assert result == expected, (
