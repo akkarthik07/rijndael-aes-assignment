@@ -10,6 +10,8 @@ AES_BLOCK_SIZE_128 = 0
 AES_BLOCK_SIZE_256 = 1
 AES_BLOCK_SIZE_512 = 2
 
+ByteArray16 = ctypes.c_ubyte * 16
+
 #sEt the argument types for the add_round_key function
 rijndael.add_round_key.argtypes = [ctypes.POINTER(ctypes.c_ubyte), ctypes.POINTER(ctypes.c_ubyte), ctypes.c_int]
 
@@ -21,14 +23,11 @@ def test_add_round_key():
 
         expected = bytes(b ^ k for b, k in zip(block_data, key_data))
 
-        block = ctypes.create_string_buffer(block_data)
-        round_key = ctypes.create_string_buffer(key_data)
-        rijndael.add_round_key(
-            ctypes.cast(block, ctypes.POINTER(ctypes.c_ubyte)), 
-            ctypes.cast(round_key, ctypes.POINTER(ctypes.c_ubyte)), 
-            AES_BLOCK_SIZE_128
-        )
-        result = bytes(block)[:16]
+        block = ByteArray16(*block_data)
+        round_key = ByteArray16(*key_data)
+
+        rijndael.add_round_key(block, round_key, AES_BLOCK_SIZE_128)
+        result = bytes(block)
 
         assert result == expected, (
             f"Test {i+1} FAILED\n"
